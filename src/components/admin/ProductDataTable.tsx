@@ -2,13 +2,18 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Button } from '@/components/ui/button';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { MoreHorizontal, Pencil, Trash2 } from 'lucide-react';
 import type { Product } from '@shared/types';
 interface ProductDataTableProps {
   products: Product[];
   isLoading: boolean;
   error: string | null;
+  onEdit: (product: Product) => void;
+  onDelete: (product: Product) => void;
 }
-export function ProductDataTable({ products, isLoading, error }: ProductDataTableProps) {
+export function ProductDataTable({ products, isLoading, error, onEdit, onDelete }: ProductDataTableProps) {
   if (isLoading) {
     return (
       <Card>
@@ -50,6 +55,7 @@ export function ProductDataTable({ products, isLoading, error }: ProductDataTabl
               <TableHead>Name</TableHead>
               <TableHead>Category</TableHead>
               <TableHead className="text-right">Price</TableHead>
+              <TableHead className="w-[50px]">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -68,11 +74,30 @@ export function ProductDataTable({ products, isLoading, error }: ProductDataTabl
                     <Badge variant="secondary">{product.category}</Badge>
                   </TableCell>
                   <TableCell className="text-right">${product.price.toFixed(2)}</TableCell>
+                  <TableCell>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon">
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={() => onEdit(product)}>
+                          <Pencil className="mr-2 h-4 w-4" />
+                          Edit
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => onDelete(product)} className="text-destructive focus:text-destructive">
+                          <Trash2 className="mr-2 h-4 w-4" />
+                          Delete
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={4} className="text-center">
+                <TableCell colSpan={5} className="text-center">
                   No products found.
                 </TableCell>
               </TableRow>

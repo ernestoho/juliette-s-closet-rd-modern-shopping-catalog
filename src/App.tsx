@@ -2,9 +2,6 @@ import { useEffect } from 'react';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import { HomePage } from '@/pages/HomePage';
 import { AdminDashboardPage } from '@/pages/admin/AdminDashboardPage';
-import { AdminLoginPage } from '@/pages/admin/AdminLoginPage';
-import { ProtectedRoute } from '@/components/admin/ProtectedRoute';
-import { NotFoundPage } from '@/pages/NotFoundPage';
 import { RouteErrorBoundary } from '@/components/RouteErrorBoundary';
 const router = createBrowserRouter([
   {
@@ -13,24 +10,9 @@ const router = createBrowserRouter([
     errorElement: <RouteErrorBoundary />,
   },
   {
-    path: '/admin/login',
-    element: <AdminLoginPage />,
-    errorElement: <RouteErrorBoundary />,
-  },
-  {
     path: '/admin',
-    element: <ProtectedRoute />,
+    element: <AdminDashboardPage />,
     errorElement: <RouteErrorBoundary />,
-    children: [
-      {
-        index: true,
-        element: <AdminDashboardPage />,
-      },
-    ],
-  },
-  {
-    path: '*',
-    element: <NotFoundPage />,
   },
 ]);
 export function App() {
