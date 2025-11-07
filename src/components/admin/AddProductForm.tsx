@@ -8,207 +8,135 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'sonner';
-import type { Product, ProductCategory } from '@shared/types';
-import { useEffect } from 'react';
-import { ImageUploader } from './ImageUploader';
 import { api } from '@/lib/api-client';
+import type { Product, ProductCategory } from '@shared/types';
 const categories: ProductCategory[] = ['Clothing', 'Home', 'Supplements', 'Amazon Various Items'];
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
-const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
 const productSchema = z.object({
   name: z.string().min(3, 'Name must be at least 3 characters'),
-  price: z
-    .string()
-    .min(1, 'Price is required')
-    .transform(Number)
-    .refine((val) => val > 0, { message: 'Price must be a positive number' }),
+  price: z.coerce.number().positive('Price must be a positive number'),
   description: z.string().min(10, 'Description must be at least 10 characters'),
+  imageUrl: z.string().url('Must be a valid URL'),
   category: z.enum(categories),
-  imageUrl: z.string().url().optional().nullable(),
-  imageFile: z
-    .instanceof(File)
-    .optional()
-    .refine((file) => !file || file.size <= MAX_FILE_SIZE, `Max file size is 5MB.`)
-    .refine(
-      (file) => !file || ACCEPTED_IMAGE_TYPES.includes(file.type),
-      '.jpg, .jpeg, .png and .webp files are accepted.'
-    ),
 });
-export type ProductFormData = z.infer<typeof productSchema>;
+type ProductFormData = z.infer<typeof productSchema>;
 interface AddProductFormProps {
-  productToEdit?: Product | null;
-  onProductActionComplete: (product: Product) => void;
+  onProductAdded: (newProduct: Product) => void;
 }
-export function AddProductForm({ productToEdit, onProductActionComplete }: AddProductFormProps) {
-  const isEditMode = !!productToEdit;
+export function AddProductForm({ onProductAdded }: AddProductFormProps) {
   const form = useForm<ProductFormData>({
     resolver: zodResolver(productSchema),
     defaultValues: {
       name: '',
-      price: undefined,
+      price: 0,
       description: '',
-      category: 'Clothing',
       imageUrl: '',
-      imageFile: undefined,
+      category: 'Clothing',
     },
   });
-  useEffect(() => {
-    if (productToEdit) {
-      form.reset({
-        name: productToEdit.name,
-        price: String(productToEdit.price),
-        description: productToEdit.description,
-        category: productToEdit.category,
-        imageUrl: productToEdit.imageUrl,
-        imageFile: undefined,
-      });
-    } else {
-      form.reset({
-        name: '',
-        price: undefined,
-        description: '',
-        category: 'Clothing',
-        imageUrl: '',
-        imageFile: undefined,
-      });
-    }
-  }, [productToEdit, form]);
   const onSubmit = async (data: ProductFormData) => {
-    if (!isEditMode && !data.imageFile) {
-      form.setError('imageFile', { type: 'manual', message: 'An image is required.' });
-      return;
-    }
-    const formData = new FormData();
-    formData.append('name', data.name);
-    formData.append('price', String(data.price));
-    formData.append('description', data.description);
-    formData.append('category', data.category);
-    if (data.imageFile) {
-      formData.append('imageFile', data.imageFile);
-    }
-    if (isEditMode && productToEdit?.imageUrl) {
-      formData.append('imageUrl', productToEdit.imageUrl);
-    }
     try {
-      let resultProduct: Product;
-      if (isEditMode && productToEdit) {
-        resultProduct = await api.put(`/api/products/${productToEdit.id}`, formData);
-      } else {
-        resultProduct = await api.post('/api/products', formData);
-      }
-      toast.success(`Product ${isEditMode ? 'updated' : 'added'} successfully!`);
-      if (!isEditMode) {
-        form.reset();
-      }
-      onProductActionComplete(resultProduct);
+      const newProduct = await api<Product>('/api/products', {
+        method: 'POST',
+        body: JSON.stringify(data),
+      });
+      toast.success('Product added successfully!');
+      form.reset();
+      onProductAdded(newProduct);
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : `An unknown error occurred.`);
+      toast.error('Failed to add product. Please try again.');
       console.error(error);
     }
   };
-  const cardContent = (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <FormField
-          control={form.control}
-          name="imageFile"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Product Image</FormLabel>
-              <FormControl>
-                <ImageUploader
-                  onFileChange={(file) => field.onChange(file)}
-                  previewUrl={form.watch('imageUrl')}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Product Name</FormLabel>
-              <FormControl>
-                <Input placeholder="e.g., Chic Summer Dress" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="price"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Price</FormLabel>
-              <FormControl>
-                <Input type="number" step="0.01" placeholder="e.g., 75.00" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="description"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Description</FormLabel>
-              <FormControl>
-                <Textarea placeholder="A light and airy dress..." {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="category"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Category</FormLabel>
-              <Select onValueChange={field.onChange} value={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a category" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {categories.map((cat) => (
-                    <SelectItem key={cat} value={cat}>
-                      {cat}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
-          {form.formState.isSubmitting
-            ? isEditMode
-              ? 'Saving...'
-              : 'Adding...'
-            : isEditMode
-            ? 'Save Changes'
-            : 'Add Product'}
-        </Button>
-      </form>
-    </Form>
-  );
-  if (isEditMode) {
-    return cardContent;
-  }
   return (
     <Card>
       <CardHeader>
         <CardTitle>Add New Product</CardTitle>
       </CardHeader>
-      <CardContent>{cardContent}</CardContent>
+      <CardContent>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Product Name</FormLabel>
+                  <FormControl>
+                    <Input placeholder="e.g., Chic Summer Dress" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="price"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Price</FormLabel>
+                  <FormControl>
+                    <Input type="number" placeholder="e.g., 75.00" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Description</FormLabel>
+                  <FormControl>
+                    <Textarea placeholder="A light and airy dress..." {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="imageUrl"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Image URL</FormLabel>
+                  <FormControl>
+                    <Input placeholder="https://images.unsplash.com/..." {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="category"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Category</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a category" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {categories.map((cat) => (
+                        <SelectItem key={cat} value={cat}>
+                          {cat}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
+              {form.formState.isSubmitting ? 'Adding...' : 'Add Product'}
+            </Button>
+          </form>
+        </Form>
+      </CardContent>
     </Card>
   );
 }
