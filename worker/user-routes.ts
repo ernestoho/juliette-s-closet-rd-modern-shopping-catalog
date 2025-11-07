@@ -33,8 +33,10 @@ export function userRoutes(app: Hono<{ Bindings: Env }>) {
     if (!imageFile) {
       return bad(c, 'Image file is required.');
     }
-    // Simulate image upload by generating a placeholder URL
-    const imageUrl = `https://placehold.co/600x750/0A0A0A/F5F5F5?text=${encodeURIComponent(name.split(' ').join('\\n'))}`;
+    // Convert image to base64 data URL
+    const arrayBuffer = await imageFile.arrayBuffer();
+    const base64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
+    const imageUrl = `data:${imageFile.type};base64,${base64}`;
     const newProduct: Product = {
       id: `prod_${crypto.randomUUID()}`,
       name,
@@ -136,8 +138,10 @@ export function userRoutes(app: Hono<{ Bindings: Env }>) {
     }
     let imageUrl: string;
     if (imageFile) {
-      // New image uploaded, simulate and generate new URL
-      imageUrl = `https://placehold.co/600x750/0A0A0A/F5F5F5?text=${encodeURIComponent(name.split(' ').join('\\n'))}`;
+      // New image uploaded, convert to base64 data URL
+      const arrayBuffer = await imageFile.arrayBuffer();
+      const base64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
+      imageUrl = `data:${imageFile.type};base64,${base64}`;
     } else if (existingImageUrl) {
       // No new image, keep the old one
       imageUrl = existingImageUrl;
