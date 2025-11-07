@@ -67,7 +67,7 @@ export function AddProductForm({ productToEdit, onProductActionComplete }: AddPr
         imageFile: undefined,
       });
     }
-  }, [productToEdit, form.reset]);
+  }, [productToEdit, form.reset, form]);
   const onSubmit = async (data: ProductFormData) => {
     if (!isEditMode && !data.imageFile) {
       form.setError('imageFile', { type: 'manual', message: 'An image is required.' });
