@@ -52,7 +52,7 @@ export function AddProductForm({ productToEdit, onProductActionComplete }: AddPr
   const onSubmit = async (data: ProductFormData) => {
     try {
       let resultProduct: Product;
-      if (isEditMode) {
+      if (isEditMode && productToEdit) {
         resultProduct = await api<Product>(`/api/products/${productToEdit.id}`, {
           method: 'PUT',
           body: JSON.stringify(data),
@@ -72,7 +72,7 @@ export function AddProductForm({ productToEdit, onProductActionComplete }: AddPr
       console.error(error);
     }
   };
-  const card = (
+  const cardContent = (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <FormField
@@ -164,14 +164,14 @@ export function AddProductForm({ productToEdit, onProductActionComplete }: AddPr
     </Form>
   );
   if (isEditMode) {
-    return card;
+    return cardContent;
   }
   return (
     <Card>
       <CardHeader>
         <CardTitle>Add New Product</CardTitle>
       </CardHeader>
-      <CardContent>{card}</CardContent>
+      <CardContent>{cardContent}</CardContent>
     </Card>
   );
 }

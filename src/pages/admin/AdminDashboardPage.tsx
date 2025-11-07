@@ -3,6 +3,7 @@ import { AddProductForm } from '@/components/admin/AddProductForm';
 import { ProductDataTable } from '@/components/admin/ProductDataTable';
 import { EditProductDialog } from '@/components/admin/EditProductDialog';
 import { DeleteProductAlert } from '@/components/admin/DeleteProductAlert';
+import { BulkUploadCard } from '@/components/admin/BulkUploadCard';
 import { Toaster, toast } from '@/components/ui/sonner';
 import { api } from '@/lib/api-client';
 import type { Product } from '@shared/types';
@@ -52,6 +53,9 @@ export function AdminDashboardPage() {
       setProductToDelete(null);
     }
   };
+  const handleBulkUploadComplete = () => {
+    fetchProducts();
+  };
   return (
     <div className="min-h-screen bg-muted/40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -61,7 +65,7 @@ export function AdminDashboardPage() {
             <p className="text-muted-foreground">Manage your products for Juliette's Closet RD.</p>
           </header>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-            <div className="lg:col-span-2">
+            <div className="lg:col-span-2 space-y-8">
               <ProductDataTable
                 products={products}
                 isLoading={isLoading}
@@ -76,8 +80,9 @@ export function AdminDashboardPage() {
                 }}
               />
             </div>
-            <div className="lg:col-span-1">
+            <div className="lg:col-span-1 space-y-8">
               <AddProductForm onProductActionComplete={handleProductAdded} />
+              <BulkUploadCard onUploadComplete={handleBulkUploadComplete} />
             </div>
           </div>
         </div>
@@ -94,7 +99,7 @@ export function AdminDashboardPage() {
         product={productToDelete}
         onConfirm={handleConfirmDelete}
       />
-      <Toaster richColors />
+      <Toaster richColors closeButton />
     </div>
   );
 }
