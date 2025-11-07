@@ -3,13 +3,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Slider } from "@/components/ui/slider";
-import { useState } from "react";
 const categories = ['All', 'Clothing', 'Home', 'Supplements', 'Amazon Various Items'];
 interface FilterSidebarProps {
   onCategoryChange: (category: string) => void;
+  onPriceChange: (value: number[]) => void;
+  priceRange: number[];
+  selectedCategory: string;
 }
-export function FilterSidebar({ onCategoryChange }: FilterSidebarProps) {
-  const [priceRange, setPriceRange] = useState([0, 500]);
+export function FilterSidebar({ onCategoryChange, onPriceChange, priceRange, selectedCategory }: FilterSidebarProps) {
   return (
     <Card className="sticky top-24">
       <CardHeader>
@@ -20,7 +21,7 @@ export function FilterSidebar({ onCategoryChange }: FilterSidebarProps) {
           <AccordionItem value="category">
             <AccordionTrigger className="text-base">Category</AccordionTrigger>
             <AccordionContent>
-              <RadioGroup defaultValue="All" onValueChange={onCategoryChange}>
+              <RadioGroup value={selectedCategory} onValueChange={onCategoryChange}>
                 {categories.map((category) => (
                   <div key={category} className="flex items-center space-x-2 py-1">
                     <RadioGroupItem value={category} id={`cat-${category}`} />
@@ -35,11 +36,10 @@ export function FilterSidebar({ onCategoryChange }: FilterSidebarProps) {
             <AccordionContent>
               <div className="p-2">
                 <Slider
-                  defaultValue={[500]}
                   max={1000}
                   step={10}
                   value={priceRange}
-                  onValueChange={setPriceRange}
+                  onValueChange={onPriceChange}
                 />
                 <div className="flex justify-between text-sm text-muted-foreground mt-2">
                   <span>${priceRange[0]}</span>

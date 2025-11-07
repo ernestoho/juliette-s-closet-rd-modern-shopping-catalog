@@ -19,7 +19,7 @@ const productSchema = z.object({
   imageUrl: z.string().url('Must be a valid URL'),
   category: z.enum(categories),
 });
-type ProductFormData = z.infer<typeof productSchema>;
+export type ProductFormData = z.infer<typeof productSchema>;
 interface AddProductFormProps {
   productToEdit?: Product | null;
   onProductActionComplete: (product: Product) => void;
