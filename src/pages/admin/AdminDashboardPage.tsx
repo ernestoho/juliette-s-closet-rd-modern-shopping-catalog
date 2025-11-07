@@ -30,7 +30,9 @@ export function AdminDashboardPage() {
     fetchProducts();
   }, [fetchProducts]);
   const handleProductAdded = (newProduct: Product) => {
-    setProducts((prevProducts) => [newProduct, ...prevProducts].sort((a, b) => (a.name > b.name ? 1 : -1)));
+    setProducts((prevProducts) =>
+      [...prevProducts, newProduct].sort((a, b) => (a.name > b.name ? 1 : -1))
+    );
   };
   const handleProductUpdated = (updatedProduct: Product) => {
     setProducts((prevProducts) =>

@@ -61,7 +61,7 @@ export function ProductDataTable({ products, isLoading, error, onEdit, onDelete 
           <TableBody>
             {products.length > 0 ? (
               products.map((product) => (
-                <TableRow key={product.id}>
+                <TableRow key={product.id} data-testid={`product-row-${product.id}`}>
                   <TableCell>
                     <img
                       src={product.imageUrl}

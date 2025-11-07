@@ -43,7 +43,7 @@ export function HomePage() {
       return (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8">
           {[...Array(4)].map((_, i) => (
-            <div key={i} className="space-y-2">
+            <div key={`skeleton-${category}-${i}`} className="space-y-2">
               <Skeleton className="aspect-[4/5] w-full" />
               <Skeleton className="h-6 w-3/4" />
               <Skeleton className="h-6 w-1/4" />
