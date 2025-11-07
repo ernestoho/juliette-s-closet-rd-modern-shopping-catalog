@@ -15,15 +15,26 @@ export function userRoutes(app: Hono<{ Bindings: Env }>) {
     const page = await ProductEntity.list(c.env);
     return ok(c, page.items);
   });
-  // POST a new product
+  // POST a new product (multipart/form-data)
   app.post('/api/products', async (c) => {
-    const { name, price, description, imageUrl, category } = (await c.req.json()) as Partial<Product>;
-    if (!isStr(name) || !isStr(description) || !isStr(imageUrl) || !isStr(category)) {
+    const formData = await c.req.formData();
+    const name = formData.get('name') as string;
+    const priceStr = formData.get('price') as string;
+    const description = formData.get('description') as string;
+    const category = formData.get('category') as ProductCategory;
+    const imageFile = formData.get('imageFile') as File;
+    if (!isStr(name) || !isStr(description) || !isStr(category)) {
       return bad(c, 'Missing required string fields.');
     }
-    if (typeof price !== 'number' || price <= 0) {
+    const price = parseFloat(priceStr);
+    if (isNaN(price) || price <= 0) {
       return bad(c, 'Price must be a positive number.');
     }
+    if (!imageFile) {
+      return bad(c, 'Image file is required.');
+    }
+    // Simulate image upload by generating a placeholder URL
+    const imageUrl = `https://placehold.co/600x750/0A0A0A/F5F5F5?text=${encodeURIComponent(name.split(' ').join('\\n'))}`;
     const newProduct: Product = {
       id: `prod_${crypto.randomUUID()}`,
       name,
@@ -102,19 +113,36 @@ export function userRoutes(app: Hono<{ Bindings: Env }>) {
     }
     return ok(c, results);
   });
-  // PUT (update) an existing product
+  // PUT (update) an existing product (multipart/form-data)
   app.put('/api/products/:id', async (c) => {
     const { id } = c.req.param();
     const productEntity = new ProductEntity(c.env, id);
     if (!(await productEntity.exists())) {
       return notFound(c, 'Product not found');
     }
-    const { name, price, description, imageUrl, category } = (await c.req.json()) as Partial<Product>;
-    if (!isStr(name) || !isStr(description) || !isStr(imageUrl) || !isStr(category)) {
+    const formData = await c.req.formData();
+    const name = formData.get('name') as string;
+    const priceStr = formData.get('price') as string;
+    const description = formData.get('description') as string;
+    const category = formData.get('category') as ProductCategory;
+    const imageFile = formData.get('imageFile') as File | null;
+    const existingImageUrl = formData.get('imageUrl') as string | null;
+    if (!isStr(name) || !isStr(description) || !isStr(category)) {
       return bad(c, 'Missing required string fields.');
     }
-    if (typeof price !== 'number' || price <= 0) {
+    const price = parseFloat(priceStr);
+    if (isNaN(price) || price <= 0) {
       return bad(c, 'Price must be a positive number.');
+    }
+    let imageUrl: string;
+    if (imageFile) {
+      // New image uploaded, simulate and generate new URL
+      imageUrl = `https://placehold.co/600x750/0A0A0A/F5F5F5?text=${encodeURIComponent(name.split(' ').join('\\n'))}`;
+    } else if (existingImageUrl) {
+      // No new image, keep the old one
+      imageUrl = existingImageUrl;
+    } else {
+      return bad(c, 'Image URL is missing.');
     }
     const updatedProductData: Product = {
       id,
