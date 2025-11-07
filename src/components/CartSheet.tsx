@@ -42,7 +42,7 @@ export function CartSheet() {
   return (
     <>
       <SheetHeader className="px-6 pt-6 pb-4">
-        <SheetTitle className="text-2xl font-display">Shopping Cart</SheetTitle>
+        <SheetTitle className="text-2xl font-display">Your Cart</SheetTitle>
         <SheetDescription>Review your items and proceed to order via WhatsApp.</SheetDescription>
       </SheetHeader>
       <Separator />
@@ -66,12 +66,7 @@ export function CartSheet() {
                       </Button>
                     </div>
                   </div>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="text-muted-foreground hover:text-destructive"
-                    onClick={() => removeItem(item.id)}
-                    aria-label={`Remove ${item.name} from cart`}>
+                  <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-destructive" onClick={() => removeItem(item.id)}>
                     <Trash2 className="h-4 w-4" />
                   </Button>
                 </div>

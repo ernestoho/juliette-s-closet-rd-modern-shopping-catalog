@@ -1,15 +1,99 @@
-import type { User, Chat, ChatMessage } from './types';
-
-export const MOCK_USERS: User[] = [
-  { id: 'u1', name: 'User A' },
-  { id: 'u2', name: 'User B' }
+import type { Product } from './types';
+export const MOCK_PRODUCTS: Product[] = [
+  {
+    id: 'prod_001',
+    name: 'Chic Summer Dress',
+    price: 75.00,
+    description: 'A light and airy dress perfect for warm summer days. Made from 100% organic cotton.',
+    imageUrl: 'https://images.unsplash.com/photo-1594633312681-425c722458ca?q=80&w=800&auto=format&fit=crop',
+    category: 'Clothing',
+  },
+  {
+    id: 'prod_002',
+    name: 'Minimalist Wall Clock',
+    price: 120.00,
+    description: 'A silent, non-ticking wall clock with a modern and minimalist design. Adds a touch of elegance to any room.',
+    imageUrl: 'https://images.unsplash.com/photo-1533090481720-856c6e3c1fdc?q=80&w=800&auto=format&fit=crop',
+    category: 'Home',
+  },
+  {
+    id: 'prod_003',
+    name: 'Organic Vitamin C',
+    price: 25.50,
+    description: 'Boost your immune system with our high-potency organic Vitamin C supplements. 90 capsules.',
+    imageUrl: 'https://images.unsplash.com/photo-1607620843249-5f33a75b067a?q=80&w=800&auto=format&fit=crop',
+    category: 'Supplements',
+  },
+  {
+    id: 'prod_004',
+    name: 'Wireless Noise-Cancelling Headphones',
+    price: 199.99,
+    description: 'Immerse yourself in music with these top-tier headphones. 30-hour battery life.',
+    imageUrl: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=800&auto=format&fit=crop',
+    category: 'Amazon Various Items',
+  },
+  {
+    id: 'prod_005',
+    name: 'Vintage Leather Jacket',
+    price: 250.00,
+    description: 'A timeless piece that adds an edge to any outfit. Made from genuine, high-quality leather.',
+    imageUrl: 'https://images.unsplash.com/photo-1521223890158-f9f7c3d5d504?q=80&w=800&auto=format&fit=crop',
+    category: 'Clothing',
+  },
+  {
+    id: 'prod_006',
+    name: 'Scented Soy Candle Set',
+    price: 45.00,
+    description: 'A set of three hand-poured soy candles in lavender, vanilla, and sandalwood scents.',
+    imageUrl: 'https://images.unsplash.com/photo-1614032323374-7b953218e7a4?q=80&w=800&auto=format&fit=crop',
+    category: 'Home',
+  },
+  {
+    id: 'prod_007',
+    name: 'Collagen Peptides Powder',
+    price: 39.99,
+    description: 'Supports healthy hair, skin, nails, and joints. Unflavored and easily dissolves in any beverage.',
+    imageUrl: 'https://images.unsplash.com/photo-1620361247116-684883737334?q=80&w=800&auto=format&fit=crop',
+    category: 'Supplements',
+  },
+  {
+    id: 'prod_008',
+    name: 'Smart Water Bottle',
+    price: 59.95,
+    description: 'Tracks your water intake and glows to remind you to stay hydrated. Syncs with a mobile app.',
+    imageUrl: 'https://images.unsplash.com/photo-1610392539637-c63532c38303?q=80&w=800&auto=format&fit=crop',
+    category: 'Amazon Various Items',
+  },
+  {
+    id: 'prod_009',
+    name: 'Linen Throw Blanket',
+    price: 89.00,
+    description: 'A cozy and breathable linen throw blanket, perfect for any season. Available in multiple colors.',
+    imageUrl: 'https://images.unsplash.com/photo-1620142469321-038b5e888d12?q=80&w=800&auto=format&fit=crop',
+    category: 'Home',
+  },
+  {
+    id: 'prod_010',
+    name: 'High-Waisted Yoga Pants',
+    price: 68.00,
+    description: 'Buttery-soft and supportive, these yoga pants are perfect for your practice and for lounging.',
+    imageUrl: 'https://images.unsplash.com/photo-1576481283369-a447a4189a7a?q=80&w=800&auto=format&fit=crop',
+    category: 'Clothing',
+  },
+  {
+    id: 'prod_011',
+    name: 'Portable Espresso Maker',
+    price: 64.99,
+    description: 'Enjoy delicious espresso anywhere. Compact, lightweight, and manually operated.',
+    imageUrl: 'https://images.unsplash.com/photo-1593999119417-7328881a83b5?q=80&w=800&auto=format&fit=crop',
+    category: 'Amazon Various Items',
+  },
+  {
+    id: 'prod_012',
+    name: 'Omega-3 Fish Oil',
+    price: 22.00,
+    description: 'High-quality fish oil for heart, brain, and joint health. Lemon flavor to prevent fishy aftertaste.',
+    imageUrl: 'https://images.unsplash.com/photo-1625353736899-669b5355913e?q=80&w=800&auto=format&fit=crop',
+    category: 'Supplements',
+  },
 ];
-
-export const MOCK_CHATS: Chat[] = [
-  { id: 'c1', title: 'General' },
-];
-
-export const MOCK_CHAT_MESSAGES: ChatMessage[] = [
-  { id: 'm1', chatId: 'c1', userId: 'u1', text: 'Hello', ts: Date.now() },
-];
-  
