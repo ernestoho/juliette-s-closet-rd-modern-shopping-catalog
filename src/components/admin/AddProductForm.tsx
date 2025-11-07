@@ -37,7 +37,7 @@ interface AddProductFormProps {
 export function AddProductForm({ productToEdit, onProductActionComplete }: AddProductFormProps) {
   const isEditMode = !!productToEdit;
   const form = useForm<ProductFormData>({
-    resolver: zodResolver(productSchema),
+    resolver: zodResolver(productSchema) as any,
     defaultValues: {
       name: '',
       price: 0,
@@ -67,7 +67,7 @@ export function AddProductForm({ productToEdit, onProductActionComplete }: AddPr
         imageFile: undefined,
       });
     }
-  }, [productToEdit, form]);
+  }, [productToEdit, form.reset]);
   const onSubmit = async (data: ProductFormData) => {
     if (!isEditMode && !data.imageFile) {
       form.setError('imageFile', { type: 'manual', message: 'An image is required.' });

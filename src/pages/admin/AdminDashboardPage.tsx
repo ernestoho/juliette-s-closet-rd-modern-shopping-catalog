@@ -30,15 +30,11 @@ export function AdminDashboardPage() {
   useEffect(() => {
     fetchProducts();
   }, [fetchProducts]);
-  const handleProductAdded = (newProduct: Product) => {
-    setProducts((prevProducts) =>
-      [...prevProducts, newProduct].sort((a, b) => (a.name > b.name ? 1 : -1))
-    );
+  const handleProductAdded = () => {
+    fetchProducts();
   };
-  const handleProductUpdated = (updatedProduct: Product) => {
-    setProducts((prevProducts) =>
-      prevProducts.map((p) => (p.id === updatedProduct.id ? updatedProduct : p)).sort((a, b) => (a.name > b.name ? 1 : -1))
-    );
+  const handleProductUpdated = () => {
+    fetchProducts();
   };
   const handleConfirmDelete = async () => {
     if (!productToDelete) return;
