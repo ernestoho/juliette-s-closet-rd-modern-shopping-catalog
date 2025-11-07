@@ -37,12 +37,17 @@ export function AdminDashboardPage() {
   useEffect(() => {
     fetchProducts();
   }, [fetchProducts]);
-  const handleProductAdded = () => {
-    fetchProducts();
+  const handleProductAdded = (newProduct: Product) => {
+    setProducts((prev) => [...prev, newProduct].sort((a, b) => (a.name > b.name ? 1 : -1)));
     emitter.emit('product-change');
   };
-  const handleProductUpdated = () => {
-    fetchProducts();
+  const handleProductUpdated = (updatedProduct: Product) => {
+    setProducts((prev) =>
+      prev
+        .map((p) => (p.id === updatedProduct.id ? updatedProduct : p))
+        .sort((a, b) => (a.name > b.name ? 1 : -1)),
+    );
+    setIsEditDialogOpen(false);
     emitter.emit('product-change');
   };
   const handleConfirmDelete = async () => {
