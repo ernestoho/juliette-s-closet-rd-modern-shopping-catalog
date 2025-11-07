@@ -1,5 +1,6 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
+import { emitter } from '@/lib/events';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { ProductCard } from '@/components/ProductCard';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -14,21 +15,30 @@ export function HomePage() {
   const [isLoading, setIsLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [priceRange, setPriceRange] = useState([0, 1000]);
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
+  const fetchProducts = useCallback(async (isInitialLoad = false) => {
+    try {
+      if (isInitialLoad) {
         setIsLoading(true);
-        const data = await api<Product[]>('/api/products');
-        setProducts(data);
-      } catch (error) {
-        console.error("Failed to fetch products:", error);
-        toast.error("Could not load products. Please try again later.");
-      } finally {
+      }
+      const data = await api<Product[]>('/api/products');
+      setProducts(data);
+    } catch (error) {
+      console.error("Failed to fetch products:", error);
+      toast.error("Could not load products. Please try again later.");
+    } finally {
+      if (isInitialLoad) {
         setIsLoading(false);
       }
-    };
-    fetchProducts();
+    }
   }, []);
+  useEffect(() => {
+    fetchProducts(true);
+    const refreshProducts = () => fetchProducts(false);
+    emitter.on('product-change', refreshProducts);
+    return () => {
+      emitter.off('product-change', refreshProducts);
+    };
+  }, [fetchProducts]);
   const filteredProducts = useMemo(() => {
     return products.filter(product => {
       const categoryMatch = selectedCategory === 'All' || product.category === selectedCategory;

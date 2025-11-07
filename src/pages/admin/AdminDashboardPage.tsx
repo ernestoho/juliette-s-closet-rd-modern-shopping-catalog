@@ -1,12 +1,17 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { AddProductForm } from '@/components/admin/AddProductForm';
 import { ProductDataTable } from '@/components/admin/ProductDataTable';
 import { EditProductDialog } from '@/components/admin/EditProductDialog';
 import { DeleteProductAlert } from '@/components/admin/DeleteProductAlert';
 import { BulkUploadCard } from '@/components/admin/BulkUploadCard';
+import { Button } from '@/components/ui/button';
 import { Toaster, toast } from '@/components/ui/sonner';
 import { api } from '@/lib/api-client';
+import { emitter } from '@/lib/events';
+import { useAuthStore } from '@/hooks/useAuthStore';
 import type { Product } from '@shared/types';
+import { LogOut } from 'lucide-react';
 export function AdminDashboardPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -15,6 +20,8 @@ export function AdminDashboardPage() {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [productToDelete, setProductToDelete] = useState<Product | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const logout = useAuthStore((state) => state.logout);
+  const navigate = useNavigate();
   const fetchProducts = useCallback(async () => {
     setIsLoading(true);
     setError(null);
@@ -32,9 +39,11 @@ export function AdminDashboardPage() {
   }, [fetchProducts]);
   const handleProductAdded = () => {
     fetchProducts();
+    emitter.emit('product-change');
   };
   const handleProductUpdated = () => {
     fetchProducts();
+    emitter.emit('product-change');
   };
   const handleConfirmDelete = async () => {
     if (!productToDelete) return;
@@ -42,6 +51,7 @@ export function AdminDashboardPage() {
       await api(`/api/products/${productToDelete.id}`, { method: 'DELETE' });
       setProducts((prev) => prev.filter((p) => p.id !== productToDelete.id));
       toast.success(`Product "${productToDelete.name}" deleted successfully.`);
+      emitter.emit('product-change');
     } catch (err) {
       toast.error('Failed to delete product.');
     } finally {
@@ -51,14 +61,26 @@ export function AdminDashboardPage() {
   };
   const handleBulkUploadComplete = () => {
     fetchProducts();
+    emitter.emit('product-change');
+  };
+  const handleLogout = () => {
+    logout();
+    toast.success('Logged out successfully.');
+    navigate('/admin/login');
   };
   return (
     <div className="min-h-screen bg-muted/40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="py-8 md:py-10 lg:py-12">
-          <header className="mb-8">
-            <h1 className="text-3xl font-bold tracking-tight text-foreground">Admin Dashboard</h1>
-            <p className="text-muted-foreground">Manage your products for Juliette's Closet RD.</p>
+          <header className="mb-8 flex justify-between items-center">
+            <div>
+              <h1 className="text-3xl font-bold tracking-tight text-foreground">Admin Dashboard</h1>
+              <p className="text-muted-foreground">Manage your products for Juliette's Closet RD.</p>
+            </div>
+            <Button variant="outline" onClick={handleLogout}>
+              <LogOut className="mr-2 h-4 w-4" />
+              Logout
+            </Button>
           </header>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
             <div className="lg:col-span-2 space-y-8">

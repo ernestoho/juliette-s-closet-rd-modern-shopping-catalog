@@ -37,7 +37,7 @@ interface AddProductFormProps {
 export function AddProductForm({ productToEdit, onProductActionComplete }: AddProductFormProps) {
   const isEditMode = !!productToEdit;
   const form = useForm<ProductFormData>({
-    resolver: zodResolver(productSchema) as any,
+    resolver: zodResolver(productSchema),
     defaultValues: {
       name: '',
       price: 0,
