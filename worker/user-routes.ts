@@ -4,6 +4,17 @@ import { ProductEntity } from "./entities";
 import { ok, bad, isStr, notFound } from './core-utils';
 import type { Product, ProductCategory } from "@shared/types";
 const VALID_CATEGORIES: ProductCategory[] = ['Clothing', 'Home', 'Supplements', 'Amazon Various Items'];
+
+function arrayBufferToBase64(buffer: ArrayBuffer) {
+  let binary = '';
+  const bytes = new Uint8Array(buffer);
+  const len = bytes.byteLength;
+  for (let i = 0; i < len; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  return btoa(binary);
+}
+
 export function userRoutes(app: Hono<{ Bindings: Env }>) {
   // Ensure mock products are seeded into the Durable Object on first request
   app.use('/api/products/*', async (c, next) => {
@@ -35,7 +46,7 @@ export function userRoutes(app: Hono<{ Bindings: Env }>) {
     }
     // Convert image to base64 data URL
     const arrayBuffer = await imageFile.arrayBuffer();
-    const base64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
+    const base64 = arrayBufferToBase64(arrayBuffer);
     const imageUrl = `data:${imageFile.type};base64,${base64}`;
     const newProduct: Product = {
       id: `prod_${crypto.randomUUID()}`,
@@ -140,7 +151,7 @@ export function userRoutes(app: Hono<{ Bindings: Env }>) {
     if (imageFile) {
       // New image uploaded, convert to base64 data URL
       const arrayBuffer = await imageFile.arrayBuffer();
-      const base64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
+      const base64 = arrayBufferToBase64(arrayBuffer);
       imageUrl = `data:${imageFile.type};base64,${base64}`;
     } else if (existingImageUrl) {
       // No new image, keep the old one
