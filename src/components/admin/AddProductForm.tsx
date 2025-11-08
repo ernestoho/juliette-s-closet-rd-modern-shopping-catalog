@@ -20,7 +20,7 @@ const productSchema = z.object({
   price: z.coerce.number().positive('Price must be a positive number'),
   description: z.string().min(10, 'Description must be at least 10 characters'),
   category: z.enum(categories),
-  imageUrl: z.string().url().optional(),
+  imageUrl: z.string().url().optional().nullable(),
   imageFile: z
     .instanceof(File)
     .optional()
