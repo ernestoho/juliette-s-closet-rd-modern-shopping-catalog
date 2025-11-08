@@ -38,7 +38,7 @@ interface AddProductFormProps {
 export function AddProductForm({ productToEdit, onProductActionComplete }: AddProductFormProps) {
   const isEditMode = !!productToEdit;
   const form = useForm<ProductFormData>({
-    resolver: zodResolver(productSchema) as any,
+    resolver: zodResolver(productSchema),
     defaultValues: {
       name: '',
       price: 0,
@@ -88,9 +88,9 @@ export function AddProductForm({ productToEdit, onProductActionComplete }: AddPr
     try {
       let resultProduct: Product;
       if (isEditMode && productToEdit) {
-        resultProduct = await api.put(`/products/${productToEdit.id}`, formData);
+        resultProduct = await api.put(`/api/products/${productToEdit.id}`, formData);
       } else {
-        resultProduct = await api.post('/products', formData);
+        resultProduct = await api.post('/api/products', formData);
       }
       toast.success(`Product ${isEditMode ? 'updated' : 'added'} successfully!`);
       if (!isEditMode) {
