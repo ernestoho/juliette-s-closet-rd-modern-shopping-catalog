@@ -41,7 +41,7 @@ export function AddProductForm({ productToEdit, onProductActionComplete }: AddPr
     resolver: zodResolver(productSchema),
     defaultValues: {
       name: '',
-      price: 0,
+      price: undefined,
       description: '',
       category: 'Clothing',
       imageUrl: '',
@@ -61,7 +61,7 @@ export function AddProductForm({ productToEdit, onProductActionComplete }: AddPr
     } else {
       form.reset({
         name: '',
-        price: 0,
+        price: undefined,
         description: '',
         category: 'Clothing',
         imageUrl: '',
