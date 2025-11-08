@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AddProductForm } from '@/components/admin/AddProductForm';
+import { AddProductForm } from '@/components/admin/Add-product-form';
 import { ProductDataTable } from '@/components/admin/ProductDataTable';
 import { EditProductDialog } from '@/components/admin/EditProductDialog';
 import { DeleteProductAlert } from '@/components/admin/DeleteProductAlert';

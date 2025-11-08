@@ -5,7 +5,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from '@/components/ui/dialog';
-import { AddProductForm } from './AddProductForm';
+import { AddProductForm } from './Add-product-form';
 import type { Product } from '@shared/types';
 interface EditProductDialogProps {
   product: Product | null;

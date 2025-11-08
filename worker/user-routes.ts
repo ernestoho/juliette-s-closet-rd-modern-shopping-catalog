@@ -4,7 +4,6 @@ import { ProductEntity } from "./entities";
 import { ok, bad, isStr, notFound } from './core-utils';
 import type { Product, ProductCategory } from "@shared/types";
 const VALID_CATEGORIES: ProductCategory[] = ['Clothing', 'Home', 'Supplements', 'Amazon Various Items'];
-
 function arrayBufferToBase64(buffer: ArrayBuffer) {
   let binary = '';
   const bytes = new Uint8Array(buffer);
@@ -14,7 +13,6 @@ function arrayBufferToBase64(buffer: ArrayBuffer) {
   }
   return btoa(binary);
 }
-
 export function userRoutes(app: Hono<{ Bindings: Env }>) {
   // Ensure mock products are seeded into the Durable Object on first request
   app.use('/api/products/*', async (c, next) => {
