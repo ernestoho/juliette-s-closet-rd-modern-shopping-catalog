@@ -11,6 +11,7 @@ import { toast } from 'sonner';
 import type { Product, ProductCategory } from '@shared/types';
 import { useEffect } from 'react';
 import { ImageUploader } from './ImageUploader';
+import { api } from '@/lib/api-client';
 const categories: ProductCategory[] = ['Clothing', 'Home', 'Supplements', 'Amazon Various Items'];
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
@@ -86,14 +87,11 @@ export function AddProductForm({ productToEdit, onProductActionComplete }: AddPr
     }
     try {
       let resultProduct: Product;
-      const url = isEditMode && productToEdit ? `/api/products/${productToEdit.id}` : '/api/products';
-      const method = isEditMode ? 'PUT' : 'POST';
-      const response = await fetch(url, { method, body: formData });
-      const result = await response.json();
-      if (!response.ok || !result.success) {
-        throw new Error(result.error || `Failed to ${isEditMode ? 'update' : 'add'} product.`);
+      if (isEditMode && productToEdit) {
+        resultProduct = await api.put(`/products/${productToEdit.id}`, formData);
+      } else {
+        resultProduct = await api.post('/products', formData);
       }
-      resultProduct = result.data;
       toast.success(`Product ${isEditMode ? 'updated' : 'added'} successfully!`);
       if (!isEditMode) {
         form.reset();
