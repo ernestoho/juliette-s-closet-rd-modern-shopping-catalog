@@ -1,6 +1,6 @@
 # Juliette's Closet RD - Modern Shopping Catalog
 
-[cloudflarebutton]
+[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/ernestoho/juliette-s-closet-rd-modern-shopping-catalog)
 
 Juliette's Closet RD is a visually breathtaking, modern e-commerce catalog designed for a seamless shopping experience. The application features a stunning dark-mode UI, showcasing products in categories like Clothing, Home, Supplements, and Amazon Various Items. Users can browse the catalog, add items to a persistent client-side shopping cart, and finalize their order by sending a pre-formatted message, including product details and their location, directly to a WhatsApp number. The architecture is built for performance and visual excellence on Cloudflare's edge network, prioritizing a fast, intuitive, and beautiful user interface.
 
@@ -85,4 +85,4 @@ This project is configured for easy deployment to Cloudflare's global network.
 
 Alternatively, you can deploy directly from your GitHub repository using the button below.
 
-[cloudflarebutton]
+[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/ernestoho/juliette-s-closet-rd-modern-shopping-catalog)
