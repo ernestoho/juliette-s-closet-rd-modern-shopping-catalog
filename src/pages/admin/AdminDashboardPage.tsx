@@ -26,7 +26,7 @@ export function AdminDashboardPage() {
     setIsLoading(true);
     setError(null);
     try {
-      const data = await api<Product[]>('/api/products');
+      const data = await api.get<Product[]>('/api/products');
       setProducts(data.sort((a, b) => (a.name > b.name ? 1 : -1)));
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch products');
@@ -53,7 +53,7 @@ export function AdminDashboardPage() {
   const handleConfirmDelete = async () => {
     if (!productToDelete) return;
     try {
-      await api(`/api/products/${productToDelete.id}`, { method: 'DELETE' });
+      await api.delete(`/api/products/${productToDelete.id}`);
       setProducts((prev) => prev.filter((p) => p.id !== productToDelete.id));
       toast.success(`Product "${productToDelete.name}" deleted successfully.`);
       emitter.emit('product-change');

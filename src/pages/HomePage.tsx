@@ -20,7 +20,7 @@ export function HomePage() {
       if (isInitialLoad) {
         setIsLoading(true);
       }
-      const data = await api<Product[]>('/api/products');
+      const data = await api.get<Product[]>('/api/products');
       setProducts(data);
     } catch (error) {
       console.error("Failed to fetch products:", error);
