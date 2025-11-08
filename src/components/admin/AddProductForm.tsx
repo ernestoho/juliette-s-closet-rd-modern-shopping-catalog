@@ -17,7 +17,11 @@ const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
 const productSchema = z.object({
   name: z.string().min(3, 'Name must be at least 3 characters'),
-  price: z.coerce.number().positive('Price must be a positive number'),
+  price: z
+    .string()
+    .min(1, 'Price is required')
+    .transform(Number)
+    .refine((val) => val > 0, { message: 'Price must be a positive number' }),
   description: z.string().min(10, 'Description must be at least 10 characters'),
   category: z.enum(categories),
   imageUrl: z.string().url().optional().nullable(),
@@ -52,7 +56,7 @@ export function AddProductForm({ productToEdit, onProductActionComplete }: AddPr
     if (productToEdit) {
       form.reset({
         name: productToEdit.name,
-        price: productToEdit.price,
+        price: String(productToEdit.price),
         description: productToEdit.description,
         category: productToEdit.category,
         imageUrl: productToEdit.imageUrl,
